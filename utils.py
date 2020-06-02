@@ -208,13 +208,11 @@ def get_sample_cifar(encoder, decoder, hidden_size, images, sample_dir, epoch, b
     save_image(x_concat, os.path.join(sample_dir, 'reconst-{}.png'.format(epoch)))
 
 
-def VAE_get_sample(model, hidden_size, images, sample_dir, epoch, batch_size, device, input_size):
+def AAE_get_sample(encoder, decoder, hidden_size, images, sample_dir, epoch, batch_size, device, input_size):
     input_size = int(math.sqrt(input_size))
 
     # Save the reconstructed images
-    out, _, _ = model(images)
-    # print(out.max())
-    # print(out.min())
+    out = decoder(encoder(images))
     out=torch.tanh(out)
 
     x_concat = torch.cat([(images.view(-1, 3, input_size, input_size)/2)+0.5, (out.view(-1, 3, input_size, input_size)/2)+0.5], dim=2)
